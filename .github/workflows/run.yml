@@ -5,6 +5,10 @@ on:
     - cron: '0 */2 * * *' # 每 2 小时自动运行一次
   workflow_dispatch:      # 允许手动点击按钮触发
 
+# 全局环境变量，彻底消除 Node.js 20 弃用警告
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   run-cfnb:
     runs-on: ubuntu-latest
@@ -34,6 +38,20 @@ jobs:
           "api_token": "$CF_API_TOKEN",
           "zone_id": "$CF_ZONE_ID",
           "records": [
+            {
+              "name": "$CF_RECORD_NAME",
+              "type": "A",
+              "ttl": 60,
+              "proxied": false
+            }
+          ],
+          "max_ips": 3,
+          "tele_token": "",
+          "tele_chat_id": ""
+        }
+        EOF
+        
+        python main.py
             {
               "name": "$CF_RECORD_NAME",
               "type": "A",
