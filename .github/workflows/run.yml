@@ -5,7 +5,6 @@ on:
     - cron: '0 */2 * * *' # 每 2 小时自动运行一次
   workflow_dispatch:      # 允许手动点击按钮触发
 
-# 全局环境变量，彻底消除 Node.js 20 弃用警告
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -27,13 +26,32 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
-    - name: Create config.json and Run cfnb
+    - name: Create config and Run
       env:
         CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
         CF_RECORD_NAME: ${{ secrets.CF_RECORD_NAME }}
       run: |
-        cat <<EOF > config.json
+        cat << 'EOF' > config.json
+        {
+          "api_token": "$CF_API_TOKEN",
+          "zone_id": "$CF_ZONE_ID",
+          "records": [
+            {
+              "name": "$CF_RECORD_NAME",
+              "type": "A",
+              "ttl": 60,
+              "proxied": false
+            }
+          ],
+          "max_ips": 3,
+          "tele_token": "",
+          "tele_chat_id": ""
+        }
+        EOF
+        
+        # 经核对，该项目的启动脚本名称为 cfnb.py，而不是 main.py
+        python3 cfnb.py
         {
           "api_token": "$CF_API_TOKEN",
           "zone_id": "$CF_ZONE_ID",
