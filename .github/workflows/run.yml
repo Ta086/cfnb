@@ -53,3 +53,10 @@ jobs:
         
         # 换回正确的启动文件名
         python main.py
+
+    - name: Sync ip.txt to GitHub
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        chmod +x git_sync.sh
+        ./git_sync.sh
