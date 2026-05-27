@@ -32,7 +32,8 @@ jobs:
         CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
         CF_RECORD_NAME: ${{ secrets.CF_RECORD_NAME }}
       run: |
-        cat << 'EOF' > config.json
+        # 注意：这里去掉了 EOF 的单引号，允许读取上面的 env 变量
+        cat <<EOF > config.json
         {
           "api_token": "$CF_API_TOKEN",
           "zone_id": "$CF_ZONE_ID",
@@ -50,37 +51,5 @@ jobs:
         }
         EOF
         
-        # 经核对，该项目的启动脚本名称为 cfnb.py，而不是 main.py
-        python3 cfnb.py
-        {
-          "api_token": "$CF_API_TOKEN",
-          "zone_id": "$CF_ZONE_ID",
-          "records": [
-            {
-              "name": "$CF_RECORD_NAME",
-              "type": "A",
-              "ttl": 60,
-              "proxied": false
-            }
-          ],
-          "max_ips": 3,
-          "tele_token": "",
-          "tele_chat_id": ""
-        }
-        EOF
-        
-        python main.py
-            {
-              "name": "$CF_RECORD_NAME",
-              "type": "A",
-              "ttl": 60,
-              "proxied": false
-            }
-          ],
-          "max_ips": 3,
-          "tele_token": "",
-          "tele_chat_id": ""
-        }
-        EOF
-        
+        # 换回正确的启动文件名
         python main.py
